@@ -1,0 +1,129 @@
+import time
+
+import random
+
+database = {}
+
+
+def init():
+    print("Welcome to BankUnited")
+
+    user_account = int(input("Do You Have Account With Us: 1 (Yes) 2 (No) \n"))
+
+    if user_account == 1:
+
+        login()
+    elif user_account == 2:
+
+        register()
+    else:
+        print("Invalid Option Selected")
+        init()
+
+
+def login():
+    print("********* Login ***********")
+
+    account_number_from_user = int(input("What Is Your Account Number? \n"))
+    password = input("What Is Your Password \n")
+
+    for accountNumber, user_details in database.items():
+        if accountNumber == account_number_from_user:
+            if user_details[3] == password:
+                bank_operation(user_details)
+        else:
+            print('Invalid Account Number or Password')
+    login()
+
+
+def register():
+    print("****** Registration *******")
+
+    email = input("Input Your Email? \n")
+    first_name = input("Input Your First Name? \n")
+    last_name = input("Input Your Last Name? \n")
+    password = input("Create Password \n")
+
+    account_number = generation_account_number()
+
+    database[account_number] = [first_name, last_name, email, password, 0.00]
+    print(database)
+
+    print("Account Created")
+    print("Your Account Number is: %d" % account_number)
+    after_registration()
+
+
+def after_registration():
+    input_option = int(input('Do You Want to Perform Another Operation? 1. (LOGIN) 2. (EXIT) \n'))
+    if input_option == 1:
+        login()
+
+    else:
+        exit()
+
+
+def bank_operation(user):
+    print("Welcome %s %s " % (user[0], user[1]))
+
+    selected_option = int(input("What Would You Like To Do? (1) Deposit (2) Withdrawal (3) Check Balance (4) Exit \n"))
+
+    if selected_option == 1:
+
+        deposit_operation(user)
+    elif selected_option == 2:
+
+        withdrawal_operation(user)
+    elif selected_option == 3:
+
+        check_balance(user)
+    elif selected_option == 4:
+
+        exit()
+    else:
+
+        print("Invalid Option Selected")
+        bank_operation(user)
+
+
+def withdrawal_operation(user):
+    print("How Much Do You Want To Withdraw?")
+    withdraw_amount = int(input('Input Your Amount \n '))
+    if withdraw_amount >= user[4]:
+        print("Insufficient Fund")
+        print("Please Deposit Into Your Account")
+
+        deposit_operation(user)
+    else:
+        print("Transaction in Progress...")
+        time.sleep(2)
+        print("Take Your Cash")
+        after_registration()
+
+
+def deposit_operation(user):
+    print("How Much Do You Want to Deposit?")
+    deposit_amount = int(input('Input Your Amount \n '))
+    user[4] += deposit_amount
+    print("Transaction in Progress...")
+    time.sleep(2)
+    print("Transaction Successful")
+    bank_operation(user)
+
+
+def check_balance(user_details):
+    print('Your Account Balance Is :', user_details[4])
+    password = input("Enter Your Password \n")
+    if user_details[3] == password:
+        bank_operation(user_details)
+
+
+def generation_account_number():
+    return random.randrange(1111111111, 9999999999)
+
+
+def logout():
+    login()
+
+
+init()
